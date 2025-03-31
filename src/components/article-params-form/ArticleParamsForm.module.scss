@@ -16,6 +16,7 @@
 	display: flex;
 	flex-shrink: 0;
 	flex-direction: column;
+	gap: 50px;
 	box-sizing: border-box;
 	width: 616px;
 	height: auto;
@@ -29,8 +30,4 @@
 	display: flex;
 	justify-content: space-between;
 	margin-top: auto;
-}
-
-.spacing {
-	height: 50px;
 }

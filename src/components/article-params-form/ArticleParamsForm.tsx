@@ -1,7 +1,7 @@
 import {
+	FormEvent,
 	FunctionComponent,
 	ReactElement,
-	SyntheticEvent,
 	useRef,
 	useState,
 } from 'react';
@@ -41,6 +41,12 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 			useState<ArticleStateType>(articleState),
 		rootRef = useRef<HTMLDivElement>(null);
 
+	useOutsideClickClose({
+		isOpen,
+		rootRef,
+		onChange: setIsOpen,
+	});
+
 	const handleSelectedOptionChange = (
 		key: keyof ArticleStateType,
 		option: OptionType
@@ -51,7 +57,7 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 		});
 	};
 
-	const handleFormSubmit = (e: SyntheticEvent) => {
+	const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setArticleState(currentArticleState);
 	};
@@ -61,12 +67,6 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 		setArticleState(defaultArticleState);
 	};
 
-	useOutsideClickClose({
-		isOpen,
-		rootRef,
-		onChange: setIsOpen,
-	});
-
 	return (
 		<div ref={rootRef}>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
@@ -75,11 +75,13 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 					styles.container,
 					{ [styles.container_open]: isOpen },
 				])}>
-				<form className={styles.form} onSubmit={handleFormSubmit}>
-					<Text size={31} weight={800} uppercase>
+				<form
+					className={styles.form}
+					onSubmit={handleFormSubmit}
+					onReset={handleFormReset}>
+					<Text as='h2' size={31} weight={800} uppercase>
 						задайте параметры
 					</Text>
-					<div className={styles.spacing} />
 					<Select
 						title='шрифт'
 						selected={currentArticleState.fontFamilyOption}
@@ -88,7 +90,6 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 							handleSelectedOptionChange('fontFamilyOption', option)
 						}
 					/>
-					<div className={styles.spacing} />
 					<RadioGroup
 						name='fontSizeOptions'
 						options={fontSizeOptions}
@@ -98,7 +99,6 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 							handleSelectedOptionChange('fontSizeOption', option)
 						}
 					/>
-					<div className={styles.spacing} />
 					<Select
 						title='цвет шрифта'
 						selected={currentArticleState.fontColor}
@@ -107,9 +107,7 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 							handleSelectedOptionChange('fontColor', option)
 						}
 					/>
-					<div className={styles.spacing} />
 					<Separator />
-					<div className={styles.spacing} />
 					<Select
 						title='цвет фона'
 						selected={currentArticleState.backgroundColor}
@@ -118,7 +116,6 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 							handleSelectedOptionChange('backgroundColor', option)
 						}
 					/>
-					<div className={styles.spacing} />
 					<Select
 						title='ширина контента'
 						selected={currentArticleState.contentWidth}
@@ -128,12 +125,7 @@ export const ArticleParamsForm: FunctionComponent<ArticleParamsFormProps> = ({
 						}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button
-							onClick={handleFormReset}
-							title='Сбросить'
-							htmlType='reset'
-							type='clear'
-						/>
+						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
